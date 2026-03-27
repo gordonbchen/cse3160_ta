@@ -1,10 +1,8 @@
 -- Traffic.
-data TrafficLight = Red | Yellow | Green deriving (Eq, Show)
+data TrafficLight = Todo
 
 nextLight :: TrafficLight -> TrafficLight
-nextLight Red = Green
-nextLight Green = Yellow
-nextLight Yellow = Red
+nextLight = undefined
 
 
 -- Tree.
@@ -18,14 +16,13 @@ tfold f acc (Node l r v) = f lacc racc v
 
 
 tAll :: (a -> Bool) -> TNode a -> Bool
-tAll f = tfold (\la ra v -> la && ra && f v) True
+tAll = undefined
 
 tMax :: (Ord a, Bounded a) => TNode a -> a
-tMax = tfold (\la ra v -> maximum [la, ra, v]) minBound
+tMax = undefined
 
 tMax' :: (Ord a) => TNode a -> Maybe a
-tMax' Leaf = Nothing
-tMax' t@(Node l r v0) = Just $ tfold (\la ra v -> maximum [la, ra, v]) v0 t
+tMax' = undefined
 
 
 -- Zippers.
@@ -36,15 +33,13 @@ toZipper x = ([], x)
 
 
 isBegin :: Zipper a -> Bool
-isBegin ([], _) = True
-isBegin _ = False
+isBegin = undefined
 
 insertLeft :: Zipper a -> a -> Zipper a
-insertLeft (l, r) x = (l, x:r)
+insertLeft = undefined
 
 replaceFocus :: Zipper a -> a -> Maybe (Zipper a)
-replaceFocus (_, []) _ = Nothing
-replaceFocus (l, h : t) x = Just (l, x : t)
+replaceFocus = undefined
 
 
 -- Monoids.
@@ -57,14 +52,7 @@ instance (Num a) => Monoid (Product a) where
     mempty = Product 1
 
 
-data Logged a = Logged {getA :: a, log :: [String]} deriving (Show)
-
-instance (Semigroup a) => Semigroup (Logged a) where
-    Logged x l1 <> Logged y l2 = Logged (x <> y) (l1 ++ l2)
-
-instance (Monoid a) => Monoid (Logged a) where
-    mempty = Logged mempty []
-
+data Logged a = Todo1
 
 logMult :: (Num a, Show a) => [a] -> Logged (Product a)
-logMult = foldMap (\x -> Logged (Product x) ["Multiplied by: " ++ show x])
+logMult = undefined
