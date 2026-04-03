@@ -34,3 +34,29 @@ combs = foldr (\x acc -> (:) <$> x <*> acc) [[]]
 
 bitstrings :: Int -> [[Int]]
 bitstrings n = combs $ replicate n [0, 1]
+
+
+-- ReLU(wx + b).
+newtype ZipperList a = ZipperList {getList :: [a]} deriving (Show)
+
+instance Functor ZipperList where
+    fmap f (ZipperList xs) = ZipperList (map f xs)
+
+instance Applicative ZipperList where
+    pure x = ZipperList [x]
+    (ZipperList xs) <*> (ZipperList ys) = ZipperList (zipWith (\x y -> x y) xs ys)
+
+linear :: (Ord a, Num a) => [a] -> [a] -> [a] -> a
+linear w b x = max z 0
+    where
+        wx = (*) <$> ZipperList w <*> ZipperList x
+        wxb = (+) <$> wx <*> ZipperList b
+        z = sum . getList $ wxb
+
+
+-- 2D6.
+d26Count :: Int -> Int
+d26Count x = (length . filter (== x)) $ (+) <$> [1..6] <*> [1..6]
+
+d26Prob :: (Floating a) => Int -> a
+d26Prob = (/ 36) . fromIntegral . d26Count
