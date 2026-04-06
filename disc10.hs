@@ -14,7 +14,7 @@ parseTemp "body"     = Right 37.0
 parseTemp x          = Left $ "Unknown temperature: " ++ x 
 
 tempDiff :: String -> String -> Either String Double
-tempDiff x y = (<$>) abs $ (-) <$> parseTemp x <*> parseTemp y
+tempDiff x y = (\x y -> abs $ x - y) <$> parseTemp x <*> parseTemp y
 
 
 -- Triplet.
@@ -34,24 +34,6 @@ combs = foldr (\x acc -> (:) <$> x <*> acc) [[]]
 
 bitstrings :: Int -> [[Int]]
 bitstrings n = combs $ replicate n [0, 1]
-
-
--- ReLU(wx + b).
-newtype ZipperList a = ZipperList {getList :: [a]} deriving (Show)
-
-instance Functor ZipperList where
-    fmap f (ZipperList xs) = ZipperList (map f xs)
-
-instance Applicative ZipperList where
-    pure x = ZipperList [x]
-    (ZipperList xs) <*> (ZipperList ys) = ZipperList (zipWith (\x y -> x y) xs ys)
-
-linear :: (Ord a, Num a) => [a] -> [a] -> [a] -> a
-linear w b x = max z 0
-    where
-        wx = (*) <$> ZipperList w <*> ZipperList x
-        wxb = (+) <$> wx <*> ZipperList b
-        z = sum . getList $ wxb
 
 
 -- 2D6.
