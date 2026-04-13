@@ -1,22 +1,3 @@
-import Control.Monad (guard)
-
--- Pythagorean Theorem.
-pythag :: Integral a => a -> [(a, a, a)]
-pythag n = do
-    a <- [1..n]
-    b <- [1..n]
-    c <- [1..n]
-    guard (a <= b && b <= c && a*a + b*b == c*c)
-    return (a, b, c)
-
-pythag' :: Integral a => a -> [(a, a, a)]
-pythag' n = [1..n] >>= \a ->
-           [1..n] >>= \b ->
-           [1..n] >>= \c -> 
-           guard (a <= b && b <= c && a*a + b*b == c*c) >>
-           return (a, b, c)
-
-
 -- JSON.
 db = [("users", [("1", "Ethan"), ("2", "Heri"), ("3", "Gordon")]),
       ("metadata", [("Ethan", "Admin"), ("Heri", "Noob"), ("Gordon", "Pleb")])]
@@ -43,10 +24,25 @@ makePair'' :: [a] -> [b] -> [(a, b)]
 makePair'' xs ys = xs >>= (\x -> ys >>= (\y -> return (x, y)))
 
 
--- Paths.
-paths :: Integral a => a -> [[a]]
-paths n = do
-    x <- [1, 2]
-    guard $ n - x >= 0
-    p <- if n - x > 0 then paths (n - x) else [[]]
-    return $ p ++ [n]
+-- MyEither.
+data MyEither a b = MyLeft a | MyRight b deriving (Show)
+
+instance Functor (MyEither a) where
+    fmap f (MyLeft x) = MyLeft x
+    fmap f (MyRight x) = MyRight (f x)
+
+instance Applicative (MyEither a) where
+    pure = MyRight
+    (MyRight x) <*> (MyRight y) = MyRight (x y)
+    (MyLeft e) <*> (MyRight _) = MyLeft e
+    (MyRight _) <*> (MyLeft e) = MyLeft e
+    (MyLeft e) <*> (MyLeft _) = MyLeft e
+
+instance Monad (MyEither a) where
+    (MyLeft e) >>= f = MyLeft e
+    (MyRight x) >>= f = f x
+
+safeDec :: Int -> MyEither String Int
+safeDec x | x - 1 < 0 = MyLeft "Could not decrement."
+          | otherwise = MyRight $ x - 1
+
