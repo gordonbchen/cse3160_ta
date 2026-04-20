@@ -1,13 +1,5 @@
 import Control.Monad (guard)
-
-
--- Paths.
-paths :: Integral a => a -> [[a]]
-paths n = do
-    x <- [1, 2]
-    guard $ n - x >= 0
-    p <- if n - x > 0 then paths (n - x) else [[]]
-    return $ p ++ [n]
+import Data.Char (toUpper)
 
 
 -- Pythagorean Theorem.
@@ -25,4 +17,28 @@ pythag' n = [1..n] >>= \a ->
            [b..n] >>= \c ->
            guard (a*a + b*b == c*c) >>
            return (a, b, c)
+
+
+-- Paths.
+paths :: Integral a => a -> [[a]]
+paths 0 = [[]]
+paths n = do
+    x <- [n-1, n-2]
+    guard $ x >= 0
+    p <- paths x
+    return $ p ++ [n]
+
+
+-- Tiny IO.
+upperLine :: IO String
+upperLine = map toUpper <$> getLine
+
+catLines :: IO String
+catLines = do
+    l1 <- getLine
+    l2 <- getLine
+    return $ l1 ++ l2
+
+catLines' :: IO String
+catLines' = (++) <$> getLine <*> getLine
 
