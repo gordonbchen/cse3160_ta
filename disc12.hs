@@ -14,15 +14,15 @@ paths n = do
 pythag :: Integral a => a -> [(a, a, a)]
 pythag n = do
     a <- [1..n]
-    b <- [1..n]
-    c <- [1..n]
-    guard (a <= b && b <= c && a*a + b*b == c*c)
+    b <- [a..n]
+    c <- [b..n]
+    guard (a*a + b*b == c*c)
     return (a, b, c)
 
 pythag' :: Integral a => a -> [(a, a, a)]
 pythag' n = [1..n] >>= \a ->
-           [1..n] >>= \b ->
-           [1..n] >>= \c -> 
-           guard (a <= b && b <= c && a*a + b*b == c*c) >>
+           [a..n] >>= \b ->
+           [b..n] >>= \c ->
+           guard (a*a + b*b == c*c) >>
            return (a, b, c)
 
